@@ -12,26 +12,6 @@ const Y_MIN: i32 = -1 * Y_MAX;
 const X_RANGE: Range<i32> = -(X_MAX)..(X_MAX + 1);
 const Y_RANGE: Range<i32> = -(Y_MAX)..(Y_MAX + 1);
 
-fn main() {
-    App::new()
-        .insert_resource(ClearColor(Color::srgb(0.8, 0.69, 0.38)))
-        .add_plugins(
-            DefaultPlugins
-                .set(WindowPlugin {
-                    primary_window: Some(Window {
-                        title: "Terrarium".to_string(),
-                        resolution: WindowResolution::new(1024.0, 1024.0)
-                            .with_scale_factor_override(1.0),
-                        ..Default::default()
-                    }),
-                    ..default()
-                })
-                .set(ImagePlugin::default_nearest()),
-        )
-        .add_plugins(SimpleTileMapPlugin)
-        .add_plugins(TerrariumSetupPlugin)
-        .run();
-}
 
 #[derive(Resource)]
 struct GlobalTimer(Timer);
@@ -43,35 +23,8 @@ impl Plugin for TerrariumSetupPlugin {
         // Create global timer
         app.insert_resource(GlobalTimer(Timer::from_seconds(2.0, TimerMode::Repeating)));
 
-        // app.add_systems(Startup, add_people);
         app.add_systems(Startup, setup);
         app.add_systems(Update, update_time);
-        // app.add_systems(Update, update_tiles_system);
-        // fn update_tiles_system(mut query: Query<&mut TileMap>) {
-        //     for mut tilemap in query.iter_mut() {
-        //         // List to store set tile operations
-        //         let mut tiles: Vec<(IVec3, Option<Tile>)> =
-        //             Vec::with_capacity((WIDTH * HEIGHT) as usize);
-
-        //         for y in Y_RANGE {
-        //             for x in X_RANGE {
-        //                 // match spite index
-        //                      ....
-        //                 // Add tile change to list
-        //                 tiles.push((
-        //                     IVec3::new(x, y, 0),
-        //                     Some(Tile {
-        //                         sprite_index,
-        //                         ..Default::default()
-        //                     }),
-        //                 ));
-        //             }
-        //         }
-
-        //         // Perform tile update
-        //         tilemap.set_tiles(tiles);
-        //     }
-        // }
 
         fn setup(
             asset_server: Res<AssetServer>,
@@ -89,6 +42,7 @@ impl Plugin for TerrariumSetupPlugin {
             let mut tiles: Vec<(IVec3, Option<Tile>)> =
                 Vec::with_capacity((WIDTH * HEIGHT) as usize);
 
+            // fill background layer
             for y in Y_RANGE {
                 for x in X_RANGE {
                     // match spite index
@@ -147,4 +101,25 @@ impl Plugin for TerrariumSetupPlugin {
             }
         }
     }
+}
+
+fn main() {
+    App::new()
+        .insert_resource(ClearColor(Color::srgb(0.8, 0.69, 0.38)))
+        .add_plugins(
+            DefaultPlugins
+                .set(WindowPlugin {
+                    primary_window: Some(Window {
+                        title: "Terrarium".to_string(),
+                        resolution: WindowResolution::new(1024.0, 1024.0)
+                            .with_scale_factor_override(1.0),
+                        ..Default::default()
+                    }),
+                    ..default()
+                })
+                .set(ImagePlugin::default_nearest()),
+        )
+        .add_plugins(SimpleTileMapPlugin)
+        .add_plugins(TerrariumSetupPlugin)
+        .run();
 }
